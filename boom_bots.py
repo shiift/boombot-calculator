@@ -41,18 +41,21 @@ def recurse_boombot(minions, boombots_left):
 		minions_copy = list(minions)
 		current_minion = minions_copy[x]
 		if current_minion.attack > 0:
+			percentage = 0
 			current_minion.health -= 1
 			if current_minion.isDead():
 				minions_copy.pop(x)
-			percentage = calculate_boombot(minions_copy)
+			if boombots_left == 1:
+				percentage = calculate_boombot(minions_copy)
+			else:
+				percentage = recurse_boombot(minions_copy, boombots_left-1)
 			if current_minion.isDead():
 				percentage.insert(x, 1)
 			current_minion.health += 1
 			all_percentages.append(percentage)
 		else:
 			all_percentages.append([0.0] * len(minions))
-	print all_percentages
-	print consolidate_percentages(all_percentages)
+	return consolidate_percentages(all_percentages)
 
 
 def main():
@@ -66,6 +69,6 @@ def main():
 		health = raw_input("Enter health of minion "+str(x)+": ")
 		minions.append(Minion(int(attack), int(health)))
 
-	recurse_boombot(minions, num_boombots)
+	print recurse_boombot(minions, int(num_boombots))
 
 main()
